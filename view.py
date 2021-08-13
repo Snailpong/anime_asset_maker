@@ -1,5 +1,6 @@
 from tkinter import *
 import tkinter.ttk
+import tkinterweb
 from PIL import Image as Img
 from PIL import ImageTk
 import numpy as np
@@ -46,6 +47,21 @@ def compose_frame1(frame1):
     Button(frame1, command=save_picture, text='Save').place(x=620, y=340)
     Button(frame1, command=save_picture, text='Save').place(x=970, y=340)
 
+def compose_frame2(frame2):
+    image_fg = ImageTk.PhotoImage(Img.fromarray(np.zeros((320, 640, 3), dtype=np.uint8)))
+    label_fg = Label(frame2, width=320, height=640)
+    set_label_image(label_fg, image_fg)
+    label_fg.place(x=10, y=30)
+    label_mask = Label(frame2, width=320, height=640)
+    set_label_image(label_mask, image_fg)
+    label_mask.place(x=350, y=30)
+    label_result = Label(frame2, width=320, height=640)
+    set_label_image(label_result, image_fg)
+    label_result.place(x=700, y=30)
+
+def compose_frame3(frame3):
+    pass
+
 def compose_ui(window):
     notebook = ttk.Notebook(window, width=1080, height=720)
     notebook.pack()
@@ -56,15 +72,16 @@ def compose_ui(window):
 
     frame2=Frame(window)
     notebook.add(frame2, text="Mesh Reconstruction")
+    compose_frame2(frame2)
 
     label2=Label(frame2, text="페이지2의 내용")
     label2.pack()
 
     frame3=Frame(window)
     notebook.add(frame3, text="MIXAMO Rigging")
-
-    label3=Label(frame3, text="페이지3의 내용")
-    label3.pack()
+    compose_frame3(frame2)
+    # label3=Label(frame3, text="페이지3의 내용")
+    # label3.pack()
 
     frame4=Frame(window)
     notebook.add(frame4, text="Blender Animating")

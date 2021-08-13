@@ -1,14 +1,19 @@
 import torch
 import torchvision.transforms as transforms
 
-def predict_cartoon(image_load):
+from src.cartoon.model_cartoongan import CartoonGANGenerator
+from src.cartoon.model_animegan import AnimeGANGenerator
+
+def predict_cartoon(image):
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
     cartoongan = CartoonGANGenerator().to(device)
-    checkpoint = torch.load('./cartoongan', map_location=device)
+    checkpoint = torch.load('./src/cartoon/cartoongan', map_location=device)
     cartoongan.load_state_dict(checkpoint['generator_state_dict'])
     cartoongan.eval()
 
-    animegan = CartoonGANGenerator().to(device)
-    checkpoint = torch.load('./animegan', map_location=device)
+    animegan = AnimeGANGenerator().to(device)
+    checkpoint = torch.load('./src/cartoon/animegan', map_location=device)
     animegan.load_state_dict(checkpoint['generator_state_dict'])
     animegan.eval()
 
@@ -21,13 +26,11 @@ def predict_cartoon(image_load):
         transforms.ToPILImage()
     ])
 
-
-    image = Image.open(file_path)
-    image = image.crop((0, 0, image.size[0] - image.size[0] % 4, image.size[1] - image.size[1] % 4))
-
+    image = image.convert("RGB").crop((0, 0, image.size[0] - image.size[0] % 4, image.size[1] - image.size[1] % 4))
     image = to_tensor(image)
     image = torch.unsqueeze(image, 0).to(device)
 
-    output = generator(image).detach().cpu()[0]
-    output = to_pil(output)
+    output1 = to_pil(cartoongan(image).detach().cpu()[0])
+    output2 = to_pil(animegan(image).detach().cpu()[0])
 
+    return output1, output2
