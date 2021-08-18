@@ -15,10 +15,18 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.conf.urls.static import static
+from django.conf import settings
 
 from polls import views
 
 urlpatterns = [
-    path('', views.index, name='index'),
+    path('', views.background, name='background'),
+    path('background', views.background, name='background'),
+    path('mesh', views.mesh, name='mesh'),
+    path('mixamo', views.mixamo, name='mixamo'),
+    path('blender', views.blender, name='blender'),
     path('admin/', admin.site.urls),
 ]
+
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
