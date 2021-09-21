@@ -59,6 +59,11 @@ def compose_frame2(frame2):
     set_label_image(label_result, image_fg)
     label_result.place(x=700, y=30)
 
+    Label(frame2, text="Image").place(x=10, y=0)
+    Button(frame2, command=lambda: load_button2(label_fg, 0), text='Load Image').place(x=270, y=0)
+    Button(frame2, command=lambda: load_button2(label_mask, 1), text='Load Mask').place(x=620, y=0)
+    Button(frame2, command=lambda: pifu_eval(), text='Estimate Mesh').place(x=620, y=0)
+
 def compose_frame3(frame3):
     pass
 
@@ -74,8 +79,8 @@ def compose_ui(window):
     notebook.add(frame2, text="Mesh Reconstruction")
     compose_frame2(frame2)
 
-    label2=Label(frame2, text="페이지2의 내용")
-    label2.pack()
+    # label2=Label(frame2, text="페이지2의 내용")
+    # label2.pack()
 
     frame3=Frame(window)
     notebook.add(frame3, text="MIXAMO Rigging")
