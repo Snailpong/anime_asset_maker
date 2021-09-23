@@ -41,28 +41,28 @@ def compose_frame1(frame1):
     label_list = [label_load, label_gen1, label_gen2, label_gen3, label_gen4, label_gen5]
 
     Button(frame1, command=lambda: load_button(label_list, image_list), text='Load').place(x=270, y=0)
-    Button(frame1, command=save_picture, text='Save').place(x=620, y=0)
-    Button(frame1, command=save_picture, text='Save').place(x=970, y=0)
-    Button(frame1, command=save_picture, text='Save').place(x=270, y=340)
-    Button(frame1, command=save_picture, text='Save').place(x=620, y=340)
-    Button(frame1, command=save_picture, text='Save').place(x=970, y=340)
+    Button(frame1, command=lambda: save_picture(0), text='Save').place(x=620, y=0)
+    Button(frame1, command=lambda: save_picture(1), text='Save').place(x=970, y=0)
+    Button(frame1, command=lambda: save_picture(2), text='Save').place(x=270, y=340)
+    Button(frame1, command=lambda: save_picture(3), text='Save').place(x=620, y=340)
+    Button(frame1, command=lambda: save_picture(4), text='Save').place(x=970, y=340)
 
 def compose_frame2(frame2):
-    image_fg = ImageTk.PhotoImage(Img.fromarray(np.zeros((320, 640, 3), dtype=np.uint8)))
-    label_fg = Label(frame2, width=320, height=640)
+    image_fg = ImageTk.PhotoImage(Img.fromarray(np.zeros((640, 640, 3), dtype=np.uint8)))
+    label_fg = Label(frame2, width=320, height=600)
     set_label_image(label_fg, image_fg)
-    label_fg.place(x=10, y=30)
-    label_mask = Label(frame2, width=320, height=640)
+    label_fg.place(x=160, y=30)
+    label_mask = Label(frame2, width=320, height=600)
     set_label_image(label_mask, image_fg)
-    label_mask.place(x=350, y=30)
-    label_result = Label(frame2, width=320, height=640)
-    set_label_image(label_result, image_fg)
-    label_result.place(x=700, y=30)
+    label_mask.place(x=600, y=30)
 
-    Label(frame2, text="Image").place(x=10, y=0)
-    Button(frame2, command=lambda: load_button2(label_fg, 0), text='Load Image').place(x=270, y=0)
-    Button(frame2, command=lambda: load_button2(label_mask, 1), text='Load Mask').place(x=620, y=0)
-    Button(frame2, command=lambda: pifu_eval(), text='Estimate Mesh').place(x=620, y=0)
+    Label(frame2, text="Image").place(x=160, y=0)
+    Label(frame2, text="Mask").place(x=610, y=0)
+    # Label(frame2, text="Rendered Mesh").place(x=710, y=0)
+    Button(frame2, command=lambda: load_button2(label_fg, 0), text='Load Image').place(x=420, y=0)
+    Button(frame2, command=lambda: load_button2(label_mask, 1), text='Load Mask').place(x=870, y=0)
+    Button(frame2, command=lambda: pifu_eval(), text='Estimate Mesh').place(x=400, y=650)
+    Button(frame2, command=lambda: view_mesh(), text='View Estimated Mesh').place(x=600, y=650)
 
 def compose_frame3(frame3):
     pass

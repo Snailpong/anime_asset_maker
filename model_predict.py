@@ -5,6 +5,7 @@ import numpy as np
 from src.cartoon.model_cartoongan import CartoonGANGenerator
 from src.cartoon.model_animegan import AnimeGANGenerator
 from src.anime.model import Generator
+from src.pifu.apps.eval2 import *
 
 to_tensor = transforms.Compose([
     transforms.ToTensor(),
@@ -35,7 +36,7 @@ def predict_cartoon(image):
     output1 = to_pil(cartoongan(image).detach().cpu()[0])
     output2 = to_pil(animegan(image).detach().cpu()[0])
 
-    return output1, output2
+    return [output1, output2]
 
 def predict_anime(image):
     torch.backends.cudnn.enabled = False
@@ -58,3 +59,15 @@ def predict_anime(image):
         outputs.append(output1)
 
     return outputs
+
+def predict_mesh(image_path, mask_path):
+    opt.batch_size = 1
+    opt.norm_color = 'group'
+    opt.load_netG_checkpoint_path = './src/pifu/checkpoints/net_G'
+    opt.load_netC_checkpoint_path = './src/pifu/checkpoints/net_C'
+    opt.test_folder_path = './sample_images'
+    evaluator = Evaluator(opt)
+    print(image_path, mask_path)
+    print(os.path.dirname(image_path))
+    data = evaluator.load_image(image_path, mask_path)
+    evaluator.eval2(data, os.path.dirname(image_path), True)
