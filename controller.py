@@ -2,6 +2,8 @@ from tkinter import *
 from tkinter import filedialog
 from PIL import Image as Img
 from PIL import ImageTk
+import pyrender
+import trimesh
 
 from model_predict import *
 
@@ -19,7 +21,6 @@ def set_predicted_cartoon(image_load, label_list):
     cartoons = predict_cartoon(image_load)
     cartoon1 = predict_anime(image_load)
     cartoon_images = cartoons + cartoon1
-    print(len(cartoon_images))
     image_gen1_tk = ImageTk.PhotoImage(cartoons[0])
     image_gen2_tk = ImageTk.PhotoImage(cartoons[1])
     image_gen3_tk = ImageTk.PhotoImage(cartoon1[0])
@@ -57,12 +58,25 @@ def load_picture(label_load):
     return Img.open(file_name)
 
 def save_picture(num):
-    file_name = filedialog.asksaveasfilename(initialdir="/", title="Save to file",
+    file_name = filedialog.asksaveasfilename(initialdir=".", title="Save to file",
         filetypes=(("png files", "*.png"),))
     print(file_name+'.png')
 
+def show_viewer(file_name):
+    fuze_trimesh = trimesh.load(file_name)
+    mesh = pyrender.Mesh.from_trimesh(fuze_trimesh)
+    scene = pyrender.Scene()
+    scene.add(mesh)
+    pyrender.Viewer(scene, use_raymond_lighting=True)
+
 def pifu_eval():
-    predict_mesh(image_path, mask_path)
+    obj_file_path = filedialog.asksaveasfilename(initialdir=".", title="Save to file",
+        filetypes=(("obj files", "*.obj"),))
+    obj_file_path += ".obj"
+    predict_mesh(image_path, mask_path, obj_file_path)
+    show_viewer(obj_file_path)
 
 def view_mesh():
-    pass
+    file_path = filedialog.askopenfilename(initialdir=".", title="Select file",
+        filetypes=(("obj files", "*.obj"),))
+    show_viewer(file_path)

@@ -60,7 +60,7 @@ def predict_anime(image):
 
     return outputs
 
-def predict_mesh(image_path, mask_path):
+def predict_mesh(image_path, mask_path, obj_file_path):
     opt.batch_size = 1
     opt.norm_color = 'group'
     opt.load_netG_checkpoint_path = './src/pifu/checkpoints/net_G'
@@ -70,4 +70,4 @@ def predict_mesh(image_path, mask_path):
     print(image_path, mask_path)
     print(os.path.dirname(image_path))
     data = evaluator.load_image(image_path, mask_path)
-    evaluator.eval2(data, os.path.dirname(image_path), True)
+    evaluator.eval2(data, os.path.dirname(image_path), True, obj_file_path)
