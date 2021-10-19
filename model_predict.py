@@ -16,7 +16,14 @@ to_pil = transforms.Compose([
     transforms.ToPILImage()
 ])
 
-def predict_cartoon(image):
+# Preprocess image (normalization, to tensor)
+def preprocess_image(image, device):
+    image = image.convert("RGB").crop((0, 0, image.size[0] - image.size[0] % 4, image.size[1] - image.size[1] % 4))
+    image = to_tensor(image)
+    image = torch.unsqueeze(image, 0).to(device)
+
+# Predict CartoonGAN, AnimeGAN
+def predict_cartoon_anime(image):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     cartoongan = CartoonGANGenerator().to(device)
@@ -29,16 +36,14 @@ def predict_cartoon(image):
     animegan.load_state_dict(checkpoint['generator_state_dict'])
     animegan.eval()
 
-    image = image.convert("RGB").crop((0, 0, image.size[0] - image.size[0] % 4, image.size[1] - image.size[1] % 4))
-    image = to_tensor(image)
-    image = torch.unsqueeze(image, 0).to(device)
-
+    image = preprocess_image(image, device)
     output1 = to_pil(cartoongan(image).detach().cpu()[0])
     output2 = to_pil(animegan(image).detach().cpu()[0])
 
     return [output1, output2]
 
-def predict_anime(image):
+# Predict AnimeGAN2
+def predict_anime2(image):
     torch.backends.cudnn.enabled = False
     torch.backends.cudnn.benchmark = False
     torch.backends.cudnn.deterministic = True
@@ -46,10 +51,8 @@ def predict_anime(image):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     styles = ['Hayao', 'Paprika', 'Shinkai']
     outputs = []
-    
-    image = image.convert("RGB").crop((0, 0, image.size[0] - image.size[0] % 4, image.size[1] - image.size[1] % 4))
-    image = to_tensor(image)
-    image = torch.unsqueeze(image, 0).to(device)
+
+    image = preprocess_image(image, device)
 
     for style in styles:
         net = Generator()
@@ -60,12 +63,14 @@ def predict_anime(image):
 
     return outputs
 
+# Predict PIFu
 def predict_mesh(image_path, mask_path, obj_file_path):
     opt.batch_size = 1
     opt.norm_color = 'group'
     opt.load_netG_checkpoint_path = './src/pifu/checkpoints/net_G'
     opt.load_netC_checkpoint_path = './src/pifu/checkpoints/net_C'
     opt.test_folder_path = './sample_images'
+
     evaluator = Evaluator(opt)
     print(image_path, mask_path)
     print(os.path.dirname(image_path))
